@@ -1,0 +1,59 @@
+// Organization model
+// Subscribtion, permissions etc... need to be defined for an "organization"
+// An organization is a group of users
+// A user can be part of multiple organizations
+// See : https://www.flightcontrol.dev/blog/ultimate-guide-to-multi-tenant-saas-data-modeling
+
+model Organization {
+  id               String           @id @default(nanoid(11))
+  slug             String           @unique @default(nanoid(6))
+  name             String
+  image            String?
+  planId           String           @default("FREE")
+  plan             OrganizationPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  email            String
+  stripeCustomerId String?
+
+  members OrganizationMembership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model OrganizationMembership {
+  id    String                       @id @default(nanoid(11))
+  roles OrganizationMembershipRole[] @default([MEMBER])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Membership")
+}
+
+enum OrganizationMembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+// The plan need to be created AND updated INSIDE migrations
+// Please follow https://to.codeline.app/nowts-limitations for more informations
+model OrganizationPlan {
+  id             String @id @default(nanoid(11))
+  name           String
+  // Limitations
+  maximumMembers Int    @default(1)
+
+  organization Organization[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
