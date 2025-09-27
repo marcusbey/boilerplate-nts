@@ -1,0 +1,67 @@
+---
+description: Use organization-based multi-tenant architecture with proper data isolation and role management.
+globs: *.ts, *.tsx
+alwaysApply: false
+---
+## Context
+
+* The application defines a multi-tenant model
+* The multi-tenant model is named `Organization`
+* Every table must be linked to `Organization` and users can be members of it.
+* Plans and payments are always linked to the `Organization`
+* The organization is defined in [better-auth.prisma](mdc:prisma/schema/better-auth.prisma)
+
+## Methods
+
+- You must always use organization for resources. Everything must be linked to an organization, not a user.
+
+- To get an organization, you can use `getCurrentOrg` or `getRequiredCurrentOrg` functions, or their cached version `getRequiredCurrentOrgCache`.
+
+```ts
+import { getCurrentOrg, getRequiredCurrentOrg } from "@/lib/organizations/get-org";
+import { getRequiredCurrentOrgCache } from "@/lib/react/cache";
+
+const org = await getCurrentOrg();
+// or for required (throws if not found)
+const org = await getRequiredCurrentOrg();
+// or cached version
+const org = await getRequiredCurrentOrgCache();
+```
+
+The cached version avoids making multiple database requests.
+
+## Rules
+
+You must always include the organization inside Prisma queries to avoid getting data from other organizations:
+
+```ts
+const org = await getRequiredCurrentOrgCache();
+
+const tags = await prisma.tag.findMany({
+  where: {
+    // Verify the organization
+    organizationId: org.id,
+  }
+});
+```
+
+## Subscription
+
+The subscription is inside the current org:
+
+```ts
+import { getPlanLimits } from "@/lib/auth/stripe/auth-plans";
+import { getRequiredCurrentOrgCache } from "@/lib/react/cache";
+
+const org = await getRequiredCurrentOrgCache();
+const subscription = org.subscription;
+
+// Get the plan limit
+const maxMembers = getPlanLimits(org.subscription?.plan ?? "free").members;
+```
+
+## Roles
+
+The roles are defined in [auth-permissions.ts](mdc:src/lib/auth/auth-permissions.ts) with the permissions.
+
+

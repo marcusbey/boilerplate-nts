@@ -1,0 +1,180 @@
+---
+title: "Embedding Testimonials"
+description: "Learn how to embed and display testimonials on your website"
+keywords: ["embed", "testimonials", "widget", "display"]
+tags: ["guide", "integration"]
+order: 2
+subcategory: "Guide"
+---
+
+# Embedding Testimonials
+
+NOW.TS provides multiple ways to embed and display your testimonials on your website or application.
+
+## Widget Embed
+
+The easiest way to display testimonials is using our JavaScript widget:
+
+### Basic Widget
+
+```html
+<div id="nowts-testimonials"></div>
+<script>
+  (function (w, d, s, o, f, js, fjs) {
+    w["NowtsTesmonials"] = o;
+    w[o] =
+      w[o] ||
+      function () {
+        (w[o].q = w[o].q || []).push(arguments);
+      };
+    ((js = d.createElement(s)), (fjs = d.getElementsByTagName(s)[0]));
+    js.id = o;
+    js.src = f;
+    js.async = 1;
+    fjs.parentNode.insertBefore(js, fjs);
+  })(
+    window,
+    document,
+    "script",
+    "nowts",
+    "https://widget.nowts.com/testimonials.js",
+  );
+
+  nowts("init", "YOUR_WIDGET_ID");
+  nowts("embed", "#nowts-testimonials");
+</script>
+```
+
+### Customization Options
+
+```javascript
+nowts("embed", "#nowts-testimonials", {
+  layout: "grid", // 'grid', 'carousel', 'masonry'
+  columns: 3, // Number of columns (grid layout)
+  theme: "light", // 'light', 'dark', 'auto'
+  showRating: true, // Show star ratings
+  showCompany: true, // Show company names
+  maxTestimonials: 12, // Maximum testimonials to display
+  autoplay: false, // Auto-rotate testimonials (carousel)
+  interval: 5000, // Rotation interval in ms (carousel)
+});
+```
+
+## React Component
+
+For React applications, use our official React component:
+
+### Installation
+
+```bash
+npm install @nowts/react-testimonials
+```
+
+### Usage
+
+```jsx
+import { Testimonials } from "@nowts/react-testimonials";
+
+function App() {
+  return (
+    <div>
+      <h1>Customer Testimonials</h1>
+      <Testimonials
+        widgetId="YOUR_WIDGET_ID"
+        layout="grid"
+        columns={3}
+        theme="light"
+        showRating={true}
+        maxTestimonials={12}
+      />
+    </div>
+  );
+}
+```
+
+## API Integration
+
+For custom implementations, use our REST API to fetch testimonials:
+
+### Fetch Testimonials
+
+```javascript
+const response = await fetch("https://api.nowts.com/v1/testimonials", {
+  headers: {
+    Authorization: "Bearer YOUR_API_TOKEN",
+  },
+});
+
+const { testimonials } = await response.json();
+```
+
+### Custom Display
+
+```javascript
+testimonials.forEach((testimonial) => {
+  const element = document.createElement("div");
+  element.className = "testimonial";
+  element.innerHTML = `
+    <blockquote>${testimonial.content}</blockquote>
+    <cite>
+      <strong>${testimonial.author.name}</strong>
+      ${testimonial.author.company ? `, ${testimonial.author.company}` : ""}
+    </cite>
+    ${testimonial.rating ? `<div class="rating">${"★".repeat(testimonial.rating)}</div>` : ""}
+  `;
+
+  document.getElementById("testimonials-container").appendChild(element);
+});
+```
+
+## Styling Guidelines
+
+### CSS Classes
+
+Our widget adds these CSS classes for custom styling:
+
+- `.nowts-testimonials` - Main container
+- `.nowts-testimonial` - Individual testimonial
+- `.nowts-content` - Testimonial content
+- `.nowts-author` - Author information
+- `.nowts-rating` - Star rating
+- `.nowts-company` - Company name
+
+### Custom CSS Example
+
+```css
+.nowts-testimonials {
+  font-family: "Your Brand Font", sans-serif;
+}
+
+.nowts-testimonial {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nowts-content {
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.nowts-author {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.nowts-rating {
+  color: #fbbf24;
+  margin-top: 0.5rem;
+}
+```
+
+## Performance Tips
+
+- **Lazy Loading**: Use the `lazy` option to load testimonials only when they come into view
+- **Caching**: Enable caching to reduce API calls
+- **Image Optimization**: Testimonial avatars are automatically optimized
+- **CDN**: Our widget is served from a global CDN for fast loading

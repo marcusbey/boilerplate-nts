@@ -1,0 +1,26 @@
+---
+description: Create unit tests using Vitest and React Testing Library for component testing.
+globs: 
+alwaysApply: false
+---
+## Context
+
+- Create unit tests in the `/__tests__` folder at the project root.
+- Use only the root-level `/__tests__` folder for all test files.
+- Iterate on tests and components until `pnpm test:ci <file-name>` passes successfully.
+
+## React Tests
+
+```tsx
+import { setup } from "../test/setup";
+import { screen, waitFor } from "@testing-library/react";
+
+describe("ComponentName", () => {
+  it("should do...", async () => {
+    const { user } = setup(<DialogManagerWrapper />);
+
+    // Use `screen` for element retreiving
+    // Use `user` to interact with the page
+  })
+})
+```

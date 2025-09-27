@@ -1,0 +1,25 @@
+---
+description: Create end-to-end tests using Playwright for comprehensive application testing.
+globs: 
+alwaysApply: false
+---
+## Context
+
+- Playwright is the tool for creating end-to-end tests.
+- Create test files in the `e2e/` folder.
+
+## Auto-correction
+
+- Create the test first, then use `pnpm test:e2e:ci -g "test-name"` to verify and auto-correct the implementation.
+
+## Database access
+
+- Always use [prisma.ts](mdc:src/lib/prisma.ts) for database access.
+
+## Utils file
+
+- [auth-test.ts](mdc:e2e/utils/auth-test.ts)
+
+## Rules
+
+- Always remove console.log statements after tests pass.

@@ -1,0 +1,197 @@
+---
+title: "List Testimonials"
+description: "Retrieve a list of testimonials from your organization"
+keywords: ["api", "testimonials", "list", "get"]
+tags: ["api", "testimonials"]
+order: 2
+subcategory: "API"
+method: "GET"
+examples:
+  bash: |
+    # Get all testimonials
+    curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+      https://api.nowts.com/v1/testimonials
+
+    # Get testimonials with filters
+    curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+      "https://api.nowts.com/v1/testimonials?status=approved&type=video&limit=10"
+  javascript: |
+    // Get all testimonials
+    const response = await fetch('https://api.nowts.com/v1/testimonials', {
+      headers: {
+        'Authorization': 'Bearer YOUR_API_TOKEN'
+      }
+    });
+
+    const data = await response.json();
+    console.log(data.testimonials);
+
+    // Get testimonials with filters
+    const params = new URLSearchParams({
+      status: 'approved',
+      type: 'video',
+      limit: '10'
+    });
+
+    const filteredResponse = await fetch(`https://api.nowts.com/v1/testimonials?${params}`, {
+      headers: {
+        'Authorization': 'Bearer YOUR_API_TOKEN'
+      }
+    });
+  python: |
+    import requests
+
+    # Get all testimonials
+    response = requests.get(
+        'https://api.nowts.com/v1/testimonials',
+        headers={'Authorization': 'Bearer YOUR_API_TOKEN'}
+    )
+
+    testimonials = response.json()['testimonials']
+
+    # Get testimonials with filters
+    params = {
+        'status': 'approved',
+        'type': 'video',
+        'limit': 10
+    }
+
+    filtered_response = requests.get(
+        'https://api.nowts.com/v1/testimonials',
+        headers={'Authorization': 'Bearer YOUR_API_TOKEN'},
+        params=params
+    )
+results:
+  success: |
+    {
+      "testimonials": [
+        {
+          "id": "test_123456789",
+          "content": "Amazing product! Highly recommend to everyone.",
+          "author": {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "company": "Acme Corp"
+          },
+          "rating": 5,
+          "type": "text",
+          "status": "approved",
+          "createdAt": "2025-08-22T10:30:00Z",
+          "updatedAt": "2025-08-22T10:30:00Z"
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 25,
+        "total": 142,
+        "totalPages": 6,
+        "hasNext": true,
+        "hasPrev": false
+      }
+    }
+  error: |
+    {
+      "error": {
+        "code": "unauthorized",
+        "message": "Invalid or missing API token"
+      }
+    }
+---
+
+# List Testimonials
+
+Retrieve a paginated list of testimonials from your organization. Supports filtering and sorting options.
+
+## Endpoint
+
+```
+GET /v1/testimonials
+```
+
+## Authentication
+
+This endpoint requires authentication. Include your API token in the Authorization header:
+
+```
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+## Query Parameters
+
+| Parameter | Type   | Default     | Description                                                |
+| --------- | ------ | ----------- | ---------------------------------------------------------- |
+| `page`    | number | 1           | Page number for pagination                                 |
+| `limit`   | number | 25          | Number of testimonials per page (max 100)                  |
+| `status`  | string | all         | Filter by status: `pending`, `approved`, `rejected`, `all` |
+| `type`    | string | all         | Filter by type: `text`, `video`, `audio`, `all`            |
+| `rating`  | number | -           | Filter by minimum rating (1-5)                             |
+| `sort`    | string | `createdAt` | Sort field: `createdAt`, `updatedAt`, `rating`             |
+| `order`   | string | `desc`      | Sort order: `asc`, `desc`                                  |
+| `search`  | string | -           | Search in testimonial content and author name              |
+| `tags`    | string | -           | Comma-separated list of tags to filter by                  |
+
+## Response
+
+Returns a paginated list of testimonials:
+
+| Field                   | Type    | Description                     |
+| ----------------------- | ------- | ------------------------------- |
+| `testimonials`          | array   | Array of testimonial objects    |
+| `pagination`            | object  | Pagination metadata             |
+| `pagination.page`       | number  | Current page number             |
+| `pagination.limit`      | number  | Items per page                  |
+| `pagination.total`      | number  | Total number of testimonials    |
+| `pagination.totalPages` | number  | Total number of pages           |
+| `pagination.hasNext`    | boolean | Whether there's a next page     |
+| `pagination.hasPrev`    | boolean | Whether there's a previous page |
+
+## Testimonial Object
+
+Each testimonial in the response includes:
+
+| Field            | Type   | Description                                       |
+| ---------------- | ------ | ------------------------------------------------- |
+| `id`             | string | Unique testimonial identifier                     |
+| `content`        | string | The testimonial content                           |
+| `author`         | object | Author information                                |
+| `author.name`    | string | Author's full name                                |
+| `author.email`   | string | Author's email address                            |
+| `author.company` | string | Author's company name (optional)                  |
+| `rating`         | number | Rating from 1-5 stars (optional)                  |
+| `type`           | string | Testimonial type: `text`, `video`, or `audio`     |
+| `status`         | string | Current status: `pending`, `approved`, `rejected` |
+| `tags`           | array  | Array of tags for categorization                  |
+| `createdAt`      | string | ISO 8601 timestamp of creation                    |
+| `updatedAt`      | string | ISO 8601 timestamp of last update                 |
+
+## Examples
+
+### Get approved video testimonials
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+  "https://api.nowts.com/v1/testimonials?status=approved&type=video"
+```
+
+### Search testimonials
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+  "https://api.nowts.com/v1/testimonials?search=amazing%20product"
+```
+
+### Get high-rated testimonials
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+  "https://api.nowts.com/v1/testimonials?rating=4&sort=rating&order=desc"
+```
+
+## Error Codes
+
+| Code  | Description                                             |
+| ----- | ------------------------------------------------------- |
+| `400` | Bad Request - Invalid query parameters                  |
+| `401` | Unauthorized - Invalid or missing API token             |
+| `403` | Forbidden - Insufficient permissions                    |
+| `500` | Internal Server Error - Something went wrong on our end |

@@ -1,0 +1,6 @@
+---
+description: Enforce modern Tailwind CSS practices for better maintainability and readability.
+globs: *.tsx, *.css, *.scss
+---
+1. Use `flex gap-n` with `flex-col` instead of `space-y-n` for better control over spacing.
+2. Use shorthand opacity syntax like `bg-white/50` instead of `bg-white bg-opacity-50`.

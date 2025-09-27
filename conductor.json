@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "setup": "./scripts/conductor-setup-script.sh",
+    "archive": "./scripts/conductor-archive-script.sh"
+  }
+}cl

@@ -1,0 +1,139 @@
+---
+description: Use DialogManager for type-safe global dialogs including confirm, input, and custom modals with automatic loading states.
+globs: *.tsx
+alwaysApply: false
+---
+
+## Context
+
+* DialogManager provides a clean, type-safe way to show global dialogs with different types and features.
+* It follows a pattern similar to toast notifications but for modal dialogs.
+
+## Basic Confirm Dialog
+
+```tsx
+import { dialogManager } from "@/features/dialog-manager/dialog-manager";
+
+dialogManager.confirm({
+  title: "Delete step",
+  description: "Are you sure you want to delete this step?",
+  action: {
+    label: "Delete",
+    onClick: async () => {
+      // Your action here...
+      await deleteStep();
+    },
+    variant: "destructive"
+  },
+});
+```
+
+## Input Dialog
+
+You can create an input dialog to collect user input:
+
+```tsx
+dialogManager.input({
+  title: "Rename campaign",
+  description: "Enter a new name for this campaign",
+  input: {
+    label: "Name",
+    defaultValue: "Current name",
+    placeholder: "Enter a new name",
+    validation: (value) => value.trim() ? null : "Name is required"
+  },
+  action: {
+    label: "Rename",
+    onClick: async (newName) => {
+      if (!newName) return;
+      await renameCampaign(newName);
+    },
+  },
+});
+```
+
+## Confirm Text Dialog
+
+For destructive actions, you can require users to type a confirmation text:
+
+```tsx
+dialogManager.confirm({
+  title: "Delete Segment",
+  description: "Are you sure you want to delete this segment? This action cannot be undone.",
+  confirmText: "DELETE",
+  action: {
+    label: "Delete",
+    onClick: async () => {
+      await deleteSegment();
+    },
+    variant: "destructive"
+  },
+});
+```
+
+## Custom Dialog
+
+For complex content, use a custom dialog:
+
+```tsx
+dialogManager.custom({
+  title: "Custom Content",
+  children: (
+    <div>
+      <p>Your custom content here</p>
+      <CustomComponent />
+    </div>
+  ),
+});
+```
+
+## Convenience Functions
+
+For common patterns, use the built-in convenience functions:
+
+```tsx
+import { dialogs } from "@/features/dialog-manager/dialog-manager";
+
+// Quick delete confirmation
+dialogs.delete("user", () => deleteUser());
+
+// Quick rename dialog
+dialogs.rename(currentName, (newName) => updateName(newName));
+```
+
+## Dialog Options
+
+All dialogs support these common options:
+
+- `title?: string` - Dialog title
+- `description?: ReactNode` - Dialog description/content
+- `icon?: LucideIcon` - Icon to display
+- `variant?: "default" | "destructive" | "warning"` - Visual style
+- `style?: "default" | "centered"` - Layout style
+- `cancel?: { label: ReactNode; onClick?: () => void }` - Custom cancel button
+
+## Action Button Options
+
+The action button supports:
+
+- `label: ReactNode` - Button text
+- `onClick: (inputValue?: string) => void | Promise<void>` - Action handler
+- `variant?: "default" | "destructive"` - Button style
+
+## Automatic Features
+
+- **Loading States**: Async actions automatically show loading spinners
+- **Error Handling**: Failed actions show toast notifications
+- **Type Safety**: Full TypeScript support with proper type inference
+- **Auto-close**: Dialogs automatically close after successful actions
+
+## Files
+
+The dialog manager is composed of:
+
+* [dialog-types.ts](mdc:src/features/dialog-manager/dialog-types.ts) - Type definitions
+* [dialog-store.ts](mdc:src/features/dialog-manager/dialog-store.ts) - State management
+* [dialog-manager.ts](mdc:src/features/dialog-manager/dialog-manager.ts) - Public API
+* [dialog-component.tsx](mdc:src/features/dialog-manager/dialog-component.tsx) - UI component
+
+

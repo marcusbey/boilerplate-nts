@@ -1,0 +1,70 @@
+---
+description: How to handle page metadata and SEO optimization in Next.js pages and layouts.
+globs: page.tsx,layout.tsx
+alwaysApply: false
+---
+## Context
+
+* Metadata in Next.js enables adding title, description, and other SEO information directly to pages and layouts.
+
+## How to use metadata?
+
+For pages requiring metadata, create a utility function in [metadata.ts](mdc:src/lib/metadata.ts):
+
+```ts
+import { unstable_cache as cache } from "next/cache";
+
+export const orgMetadata = cache(
+  async (orgSlug: string): Promise<Metadata> => {
+    const org = await prisma.organization.findFirst({
+      where: {
+        slug: orgSlug,
+      },
+    });
+
+    if (!org) {
+      return {
+        title: "Organization not found",
+      };
+    }
+
+    return {
+      title: `${org.name}`,
+      description: "Your organization dashboard",
+    };
+  },
+  ["org-metadata"],
+  { revalidate: 100 },
+);
+```
+
+Once created, use it inside a `layout.tsx` or `page.tsx` file:
+
+```ts
+import type { LayoutParams } from "@/types/next";
+import type { Metadata } from "next";
+
+export async function generateMetadata(
+  props: LayoutParams<{ orgSlug: string }>,
+): Promise<Metadata> {
+  const params = await props.params;
+  return orgMetadata(params.orgSlug);
+}
+```
+
+Important: use this primarily in `layout` files to leverage Next.js methods for adding additional metadata.
+
+## Usage sub-page metadata
+
+For sub-pages like `/users/userId/product` where the parent `users` page already has metadata and you want to append "- Product" to the title, use this method:
+
+```ts
+import { combineWithParentMetadata } from "@/lib/metadata";
+
+export const generateMetadata = combineWithParentMetadata({
+  title: "Users",
+  description: "Manage leads",
+});
+```
+
+This combines the current metadata title with additional information while replacing other metadata fields.

@@ -1,0 +1,26 @@
+---
+description: Use this rule to enforce consistent naming conventions for Zod schemas and their type extractions.
+globs: *.store.ts, *.ts
+---
+
+## Context
+
+- Zod schemas are used to parse data for forms, API endpoints, and other validation needs, and you must always follow the naming rules.
+
+## Naming rules
+
+All schemas must start with an uppercase letter and be suffixed with `Schema`:
+
+- `UserSchema`
+- `CreateUserSchema`
+- `UpdateUserSchema`
+
+## Extract types
+
+To extract types, use `z.infer`:
+
+```ts
+export type UpdateUserSchemaType = z.infer<typeof UpdateUserSchema>;
+```
+
+The name is always `NameOfSchemaType` where `Type` is the suffix.

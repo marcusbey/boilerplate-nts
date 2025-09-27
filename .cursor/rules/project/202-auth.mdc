@@ -1,0 +1,77 @@
+---
+description: Use Better Auth for authentication with helper functions for server and client components.
+globs: *.tsx, *.ts
+alwaysApply: false
+---
+## Context
+
+* We use Better Auth to handle authentication in our application.
+* Our application creates helpers to simplify retrieving the user.
+
+## Example Server Side
+
+To get the current user, you must use `auth` function :
+
+```ts
+import { getUser, getRequiredUser } from "@/lib/auth/auth-user";
+
+// user is optional
+const user = await getUser();
+// throw an error if user is not defined
+const user = await getRequiredUser();
+```
+
+`getRequiredUser` will throw an `unauthorized` error that will be caught by `unauthorized.tsx`. You can check [105-nextjs-routes.mdc](mdc:.cursor/rules/general/105-nextjs-routes.mdc)
+
+## Example Client Side
+
+Use `useSession` from [212-better-auth.mdc](mdc:.cursor/rules/project/212-better-auth.mdc) and [auth-client.ts](mdc:src/lib/auth-client.ts) !
+
+```ts
+import { useSession } from "@/lib/auth-client";
+
+const Component = () => {
+  const session = useSession();
+}
+```
+
+## Mutation data
+
+To mutate data from the `authClient` you must always use the following syntax: 
+
+```tsx
+import { unwrapSafePromise } from "@/lib/promises";
+import { authClient } from "@/lib/auth-client";
+import { useMutation } from "@tanstack/react-query";
+
+const Component = () => {
+  const verifyEmailMutation = useMutation({
+    mutationFn: async () => {
+      return unwrapSafePromise(
+        authClient.sendVerificationEmail({
+          email: defaultValues.email,
+          callbackURL: "/account",
+        }),
+      );
+    },
+    onSuccess: () => {
+      toast.success("Verification email sent");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  return (
+    <LoadingButton
+      type="button"
+      size="sm"
+      variant="ghost"
+      onClick={() => verifyEmailMutation.mutate()}
+      loading={verifyEmailMutation.isPending}
+    >
+      Verify email
+    </LoadingButton>
+  )
+}
+

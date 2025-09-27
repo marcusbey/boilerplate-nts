@@ -1,0 +1,53 @@
+---
+description: Use React Server Components for async server-side operations in Next.js 15.
+globs: *.tsx
+---
+## Context
+
+* React Server Components run only on the server and enable async operations.
+* Use for database queries, file system operations, and backend logic directly in components.
+
+## Usage
+
+Use async server components for backend operations in pages and layouts:
+
+```tsx
+// Use "async" for server components
+export default async function Page() {
+  // Use "await" for async operations
+  const result = await prisma.user.findMany();
+  return (
+    <div>
+      {result.map((user) => (
+        <p>{user.name}</p>
+      ))}
+    </div>
+  );
+}
+```
+
+Server components can perform backend operations including:
+
+* Prisma database queries
+* File system operations
+* Analytics tracking
+* Third-party API calls
+
+Available Next.js server methods: 
+
+```tsx
+import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
+
+// Redirect to another page
+redirect('/login');
+
+// Show the `not-found.tsx` file
+notFound()
+```
+
+Server component rules:
+
+1. Server components must be `async` functions
+2. Cannot use React hooks (useState, useEffect, etc.)
+3. Cannot access browser APIs (document, window) as they run server-side only

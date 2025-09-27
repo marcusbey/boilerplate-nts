@@ -1,0 +1,33 @@
+---
+description: Use layout components to create consistent UI structure for dashboard pages.
+globs: page.tsx, layout.tsx
+---
+Use the layout utility components to structure dashboard pages consistently.
+
+```tsx
+import {
+  Layout,
+  LayoutContent,
+  LayoutDescription,
+  LayoutHeader,
+  LayoutTitle,
+  LayoutActions,
+} from "@/features/page/layout";
+
+export default async function SubscribersPage() {
+  return (
+    <Layout>
+      <LayoutHeader>
+        <LayoutTitle>Title</LayoutTitle>
+        <LayoutDescription>Description</LayoutDescription>
+      </LayoutHeader>
+      <LayoutActions>
+        <Button>Action</Button>
+      </LayoutActions>
+      <LayoutContent>
+        {/* Page content goes here */}
+      </LayoutContent>
+    </Layout>
+  );
+}
+```

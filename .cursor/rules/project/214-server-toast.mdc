@@ -1,0 +1,46 @@
+---
+description: How to display toast notifications from client and server components.
+globs: *.tsx, *.ts
+alwaysApply: false
+---
+## Context
+
+Toasts are small notifications that appear in the corner of the application.
+
+## Rules
+
+There are two types of toast triggers:
+
+* [server-toast.tsx](mdc:src/lib/server-toast.tsx) for server-side toasts
+* `toast` from Sonner for client-side toasts 
+
+### Client Toast
+
+```tsx
+"use client"
+
+import { toast } from "sonner";
+
+function MyComponent() {
+  return <button onClick={() => toast("Hello")}>Hello</button>;
+}
+```
+
+### Server Toast
+
+Server toasts are only available in API routes and server actions.
+
+```tsx
+import { serverToast } from "@/lib/server-toast";
+
+export const updateProject = orgAction
+  .metadata({
+    permissions: {
+      project: ["update"],
+    },
+  })
+  .inputSchema(updateProjectSchema)
+  .action(async ({ parsedInput: input, ctx }) => {
+    serverToast("Hello", "error");
+  });
+```

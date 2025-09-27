@@ -1,0 +1,30 @@
+---
+description: Use when creating components with Test-Driven Development and full integration test coverage.
+globs: 
+alwaysApply: false
+---
+## Context:
+
+- Create components following TDD principles.
+- Create components with full integration tests.
+- You must FIRST create the integration test file, then generate the code.
+
+## Workflow
+
+0. Search the file and read the code that needs to be edited.
+0. Plan what you will do, such as where the components will be created and the component name.
+1. Create a test file in the `e2e` folder.
+2. Create the component and the page in the correct folder following routes.mdc and all project rules.
+3. Run the tests with `pnpm test:e2e:ci -g "name-of-the-test"`.
+4. Correct the component until the tests pass.
+
+## Debug
+
+* You can use `page.evaluate` to test the content.
+* You can use `console.log` inside the page to understand the issues.
+* You CAN'T use screenshots.
+* You CAN'T use `page.pause()`.
+
+## Important information
+
+* Most tables are Organization-related and must be created inside /orgs/[orgSlug] folder.

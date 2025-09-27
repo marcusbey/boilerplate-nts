@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignore": [
+    "src/components/ui/*",
+    "*.config.js",
+    "playwright.config.ts",
+    "src/lib/server-url.ts",
+    "src/site-config.ts",
+    "e2e/**",
+    ".claude/**",
+    "prisma"
+  ],
+  "paths": {
+    "@/*": ["./src/*"],
+    "@app/*": ["./app/*"],
+    "@email/*": ["./emails/*"]
+  },
+  "entry": ["**/unauthorized.tsx", "**/sitemap.tsx", "src/components/**"]
+}

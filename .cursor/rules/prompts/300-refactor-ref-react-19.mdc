@@ -1,0 +1,50 @@
+---
+description: Refactor React components to use React 19's native ref prop instead of forwardRef.
+globs: *.tsx
+alwaysApply: false
+---
+## Context
+React 19 eliminates the need for `forwardRef` when passing ref to components. We can now directly use `ref` as a prop:
+
+```tsx
+const MyButton = ({ ref, ...props }: ComponentProps<"button">) => {
+  return <button ref={ref} {...props} />;
+};
+```
+
+## Goal
+
+Refactor components that currently use `forwardRef` to use React 19's native `ref` prop.
+
+
+## Example
+
+BEFORE :
+
+```tsx
+type SomeCustomProps = {
+  color: "red" | "blue";
+} & ComponentPropsWithoutRef<"div">;
+
+export const MyCustomComponent = forwardRef<HTMLDivElement, SomeCustomProps>(
+  ({ color, ...props }, ref) => {
+    return <div ref={ref} {...props} />;
+  },
+);
+```
+
+AFTER :
+
+```tsx
+type SomeCustomProps = {
+  color: "red" | "blue";
+} & ComponentProps<"div">;
+
+export const MyCustomComponent = ({
+  color,
+  ref,
+  ...props
+}: SomeCustomProps) => {
+  return <div ref={ref} {...props} />;
+};
+```

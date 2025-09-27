@@ -1,0 +1,83 @@
+---
+description: Use next-zod-route to create safe API routes with authentication and validation.
+globs: **/route.ts
+---
+## Context
+
+* API Routes in Next.js enable developers to create API endpoints for GET / POST / PATCH / PUT / DELETE requests
+* We use `next-zod-route` to create safe routes.
+* Safe routes verify user permissions and parse params, body, and query parameters.
+
+## Example 1 : Org Route
+
+```ts
+// app/api/org/[orgId]/route.ts
+import { prisma } from "@/lib/prisma";
+import { orgRoute } from "@/lib/zod-route";
+import { z } from "zod";
+import { NextResponse } from "next/server";
+
+export const POST = orgRoute
+  // Path params = /orgs/:orgId
+  .params(
+    z.object({
+      orgId: z.string(),
+    }),
+  )
+  // Body params = { name: "John" }
+  .body(z.object({ name: z.string() }))
+  // Query params = ?a=1&b=2
+  .query(z.object({ query: z.string() }))
+  .handler(async (req, { params, body, query, ctx }) => {
+    // ctx.organization is available from orgRoute middleware
+    const orgId = params.orgId;
+    await prisma.organization.update({
+      where: {
+        id: params.orgId,
+      },
+      data: {
+        name: body.name,
+      },
+    });
+
+    return NextResponse.json({ ok: true }, { status: 200 })
+  });
+```
+
+Our application uses [204-organization.mdc](mdc:.cursor/rules/project/204-organization.mdc) to handle permissions
+
+## Rules
+
+- Always create org related routes insides `/api/org/[orgId]/*`
+- Always use `orgRoute` to create safe routes inside `/api/org/[orgId]/*`
+- In general, you can use `authRoute` to create safe routes that is NOT related to orgs.
+
+## Route Type
+
+* `orgRoute` - organization-based authorization with permission validation, provides `ctx.organization`
+* `authRoute` - authentication required, provides `ctx.user`  
+* `route` - base route with error handling, no authentication required
+
+## Error
+
+Errors are not caught and sent to the client by default. If you want the client to retrieve errors, you must use `ZodRouteError`:
+
+```tsx
+import { orgRoute, ZodRouteError } from "@/lib/zod-route";
+
+export const GET = orgRoute
+  .params(SubscriberParamsSchema)
+  .handler(async (req, { params, ctx }) => {
+    const subscriber = // ...
+
+    if (!subscriber) {
+      throw new ZodRouteError("Subscriber not found", 404);
+    }
+    // Automatically send 200 with JSON
+    return subscriber
+  });
+```
+
+## Files
+
+- [zod-route.ts](mdc:src/lib/zod-route.ts)

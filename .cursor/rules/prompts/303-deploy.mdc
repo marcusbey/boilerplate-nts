@@ -1,0 +1,15 @@
+---
+description: Automatically fix TypeScript and ESLint errors before deployment.
+globs: 
+alwaysApply: false
+---
+## Context
+
+- Automatically correct TypeScript and ESLint errors to ensure clean code before deployment.
+
+## Workflow
+
+1. Run `pnpm lint` to check for linting issues.
+2. Correct all errors and re-run `pnpm lint` until no errors remain.
+3. Run `pnpm ts` to check for TypeScript issues.
+4. Correct all errors and re-run `pnpm ts` until no errors remain.

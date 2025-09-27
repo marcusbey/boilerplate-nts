@@ -1,0 +1,22 @@
+---
+description: Write PostgreSQL queries with proper syntax for Prisma migrations and raw SQL.
+globs: *.sql
+---
+## Context
+
+* Use Prisma with PostgreSQL database for data management.
+* Write migrations using proper PostgreSQL syntax.
+
+## Rules
+
+Always use PostgreSQL syntax with double quotes for table and column names in .sql files.
+
+```sql
+INSERT INTO "OrganizationPlan" ("id", "name", "maximumMembers", "createdAt", "updatedAt")
+VALUES 
+  ('FREE', 'Free Plan', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('PRO', 'Pro Plan', 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+ON CONFLICT ("id") DO NOTHING;
+```
+
+- Use valid PostgreSQL syntax with double quotes for table and column names.

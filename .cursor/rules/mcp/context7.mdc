@@ -1,0 +1,12 @@
+---
+description: Always fetch up-to-date library documentation using Context7 MCP before implementing or using any external tools.
+globs: 
+alwaysApply: false
+---
+## Context
+
+Context7 is an MCP that helps you get contextual information about libraries by providing access to their up-to-date documentation.
+
+## Rules
+
+Always retrieve library documentation before implementation to ensure accurate usage patterns, as built-in knowledge may be outdated.

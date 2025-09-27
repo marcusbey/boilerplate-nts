@@ -1,0 +1,94 @@
+---
+description: Create and use server actions with next-safe-action library for authenticated database mutations.
+globs: *.ts, *.tsx
+---
+## Context
+
+* Server Actions execute server-side code (like database mutations) without API endpoints, using React's abstraction for server-side code.
+* We use `next-safe-action` to handle authentication, security, and data validation.
+
+## Usage
+
+### 1. Create server action files
+
+Use the `server-action-name.action.ts` naming convention to easily identify server actions.
+
+```ts
+// All server actions must start with "use server" to inform Next.js that this method must be executed on the server
+"use server";
+
+import { z } from "zod";
+import { orgAction } from "@/lib/actions/safe-actions";
+import { prisma } from "@/lib/prisma";
+
+// orgAction is a utility from the library "next-safe-action" that handles middleware to verify the permissions of the user.
+// Use `authAction` for non-org-related actions.
+
+const Schema = z.object({
+  name: z.string(),
+  schema: z.string(),
+});
+
+// Server actions must ALWAYS be suffixed with "Action" like "deleteUserAction"
+export const demoAction = orgAction
+  // We can limit the action to specific roles
+  .metadata({
+    roles: ["admin", "owner"],
+    permissions: { databases: ["create"] },
+  })
+  // The schema is used to validate the input of the action
+  .inputSchema(Schema)
+  .action(async ({ parsedInput: input, ctx }) => {
+    // We can do async code here
+    const database = await prisma.database.create({
+      data: {
+        name: input.name,
+        schema: input.schema,
+        organizationId: ctx.org.id,
+      },
+    });
+
+    return database;
+  });
+```
+
+### 2. Use the server action in a client component
+
+Use Server Actions in client components as shown in the following example:
+
+```tsx
+import { demoAction } from "./server-action-name.action";
+import { useMutation } from "@tanstack/react-query";
+import { resolveActionResult } from "@/lib/actions/actions-utils";
+
+export const Form = () => {
+  // ...
+
+  const mutation = useMutation({
+    mutationFn: async (data: FormData) =>
+      resolveActionResult(demoAction(data)),
+    onError: (error) => toast.error(error.message),
+    onSuccess: (result) => {
+      toast.success("Demo Action executed!");
+    },
+  });
+```
+
+## Rules
+
+- Always suffix server actions with "Action" (e.g., "updateUserAction", "createSubscriberAction")
+- Use `inputSchema` instead of `schema` for input validation
+- Always include necessary imports (z, prisma, etc.)
+
+## Available actions
+
+* `action`: For general actions without authentication
+* `authAction`: For actions that require user authentication
+* `orgAction`: For actions that require authentication and organization context
+
+## Files
+
+* [safe-actions.ts](mdc:src/lib/actions/safe-actions.ts)
+
+
+

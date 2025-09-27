@@ -1,0 +1,16 @@
+---
+description: Use this rule to correctly implement Better-Auth for authentication, organization management, and subscription handling.
+alwaysApply: false
+---
+
+## Context
+
+- Better-Auth is the library used for handling authentication, organization, and subscription management.
+
+## Config files
+
+- [auth.ts](mdc:src/lib/auth.ts) is the main config file where `auth` is used only on the server
+- [auth-client.ts](mdc:src/lib/auth-client.ts) is the client-side config file where `authClient` is used only on the client
+- [auth-permissions.ts](mdc:src/lib/auth/auth-permissions.ts) defines all the permissions for the application
+- [auth-plans.ts](mdc:src/lib/auth/stripe/auth-plans.ts) defines the application's subscription plans
+- [auth-org.ts](mdc:src/lib/auth/auth-org.ts) contains organization helper functions

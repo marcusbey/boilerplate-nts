@@ -1,0 +1,43 @@
+---
+description: Define how to handle role-based permissions and authorization in server components.
+globs: *.tsx, *.ts
+alwaysApply: false
+---
+## Context
+
+- The application handles permissions using Better Auth in [auth-permissions.ts](mdc:src/lib/auth/auth-permissions.ts)
+- Permissions are based on user roles
+- Utility methods are available to test permissions 
+
+## Testing permissions (server-side only)
+
+See [101-client-components.mdc](mdc:.cursor/rules/general/101-client-components.mdc) and [107-server-components.mdc](mdc:.cursor/rules/general/107-server-components.mdc) for component-specific rules.
+
+To test permissions, use the `hasPermission` method:
+
+```tsx
+import { hasPermission } from "@/lib/auth/auth-org";
+
+export default async function RoutePage(
+  props: PageParams<{
+    orgSlug: string;
+  }>,
+) {
+  const params = await props.params;
+
+  return (
+    <LayoutActions>
+      {(await hasPermission({
+        member: ["create"],
+      })) ? (
+        <Link
+          href={`/orgs/${params.orgSlug}/settings/members`}
+          className={buttonVariants({ variant: "outline" })}
+        >
+          Invite member
+        </Link>
+      ) : null}
+    </LayoutActions>
+  );
+}
+```

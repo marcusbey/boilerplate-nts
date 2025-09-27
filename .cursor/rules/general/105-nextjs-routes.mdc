@@ -1,0 +1,69 @@
+---
+description: Create and use Next.js routing files (page, layout, error, loading) for app structure.
+globs: *.tsx,page.tsx,layout.tsx,loading.tsx,error.tsx,not-found.tsx
+alwaysApply: false
+---
+## Context
+
+* Next.js handles routing through file-based routing in the `app` directory.
+* Use specific file names to create pages, layouts, error boundaries, and loading states.
+
+## `page.tsx`
+
+Use page.tsx files to define individual pages in your application.
+
+* `/app/users/page.tsx` will route in `/users`
+
+Always await params and searchParams in Next.js 15 and use PageParams type.
+
+Example:
+
+```tsx
+import type { PageParams } from "@/types/next";
+
+// You always need to use PageParams
+export default async function RoutePage(props: PageParams<{ userId: string }>) {
+  // You need to await searchParams
+  const searchParams = await props.searchParams;
+  const page = searchParams.page;
+
+  // You need to await params
+  const params = await props.params;
+  const userId = params.userId;
+
+  return // ...
+}
+
+```
+
+## `layout.tsx`
+
+Use layout.tsx files to wrap child routes with shared UI components and logic.
+
+* `/app/users/layout.tsx` will take a children and every route will have the layout applied, exemple :
+
+* `/users/1`
+* `/users`
+* `/users/dashboard/test`
+
+Always await params in layouts and use LayoutParams type.
+
+## `error.tsx`
+
+Use error.tsx files to handle errors in child routes with error boundaries.
+
+* `/app/users/error.tsx` will show an error for every route that didn't have a nearest error, children of `/users`
+
+## `loading.tsx`
+
+Use loading.tsx files to show loading states while server components are rendering.
+
+* `/app/users/loading.tsx` will show a loader for every route that didn't have a nearest loading, children of `/users`
+
+
+
+
+
+
+
+

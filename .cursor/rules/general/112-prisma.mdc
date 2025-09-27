@@ -1,0 +1,100 @@
+---
+description: Use Prisma ORM efficiently with proper query organization and type safety.
+globs: *.ts, *.tsx
+---
+## Context
+
+* We use Prisma as an ORM
+* Prisma uses PostgreSQL as the database
+
+## Usage with small queries
+
+For small queries used in only one place, fetch data directly from a [107-server-components.mdc](mdc:.cursor/rules/general/107-server-components.mdc) like this: 
+
+```tsx
+export default async function EditProfilePage() {
+  const user = await requiredAuth();
+
+  const hasPassword = await prisma.user.count({
+    where: {
+      id: user.id,
+      passwordHash: {
+        not: null,
+      },
+    },
+  });
+
+  return (
+    // ...
+  );
+}
+```
+
+## Usage with big and reusable queries
+
+For complex queries involving frontend logic OR when the return type is used across multiple components, create the query under /lib/prisma folder.
+
+Example with an organization query: 
+
+```tsx
+import type { OrganizationMembershipRole, Prisma, User } from "@/generated/prisma";
+import { prisma } from "../prisma";
+
+// Can be just an object if no params needed
+// Can be also "Include" Query
+export const OrgSelectQuery = (userId: string) =>
+  ({
+    id: true,
+    slug: true,
+    name: true,
+    plan: true,
+    email: true,
+    image: true,
+    stripeCustomerId: true,
+    timezone: true,
+    members: {
+      where: {
+        userId: userId,
+      },
+      select: {
+        roles: true,
+      },
+    },
+  }) satisfies Prisma.OrganizationSelect;
+
+export const getOrganization = async (
+  organizationSlug: string,
+  user: NonNullable<User>,
+  roles?: OrganizationMembershipRole[],
+) => {
+  const org = await prisma.organization.findFirst({
+    where: {
+      OR: [{ slug: organizationSlug }, { id: organizationSlug }],
+      members: {
+        some: {
+          userId: user.id,
+          roles: roles
+            ? {
+                hasSome: [...roles, "OWNER"],
+              }
+            : undefined,
+        },
+      },
+    },
+    select: OrgSelectQuery(user.id),
+  });
+
+  return org;
+};
+
+// IMPORTANT : Export the return type of the query so we can use it later
+export type OrganizationViewType = NonNullable<
+  Prisma.PromiseReturnType<typeof getOrganization>
+>;
+```
+
+## Rules
+
+* When using a type in component props, always use query return types to ensure automatic updates when queries change (e.g., `OrganizationViewType`).
+
+

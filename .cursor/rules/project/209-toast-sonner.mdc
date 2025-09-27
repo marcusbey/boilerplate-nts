@@ -1,0 +1,13 @@
+---
+description: Display toast notifications using Sonner for user feedback and status messages.
+globs: *.ts, *.tsx
+---
+Use toast notifications with the following examples:
+
+```ts
+import { toast } from "sonner";
+
+toast.success("Success message");
+
+toast.error("Error message");
+```

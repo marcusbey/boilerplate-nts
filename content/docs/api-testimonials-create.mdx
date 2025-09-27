@@ -1,0 +1,150 @@
+---
+title: "Create Testimonial"
+description: "Create a new testimonial programmatically via the NOW.TS API"
+keywords: ["api", "testimonials", "create", "post"]
+tags: ["api", "testimonials"]
+order: 1
+subcategory: "API"
+method: "POST"
+examples:
+  bash: |
+    curl -X POST https://api.nowts.com/v1/testimonials \
+      -H "Authorization: Bearer YOUR_API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "content": "Amazing product! Highly recommend to everyone.",
+        "author": {
+          "name": "John Doe",
+          "email": "john@example.com",
+          "company": "Acme Corp"
+        },
+        "rating": 5,
+        "type": "text"
+      }'
+  javascript: |
+    const response = await fetch('https://api.nowts.com/v1/testimonials', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer YOUR_API_TOKEN',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        content: 'Amazing product! Highly recommend to everyone.',
+        author: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          company: 'Acme Corp'
+        },
+        rating: 5,
+        type: 'text'
+      })
+    });
+
+    const testimonial = await response.json();
+    console.log(testimonial);
+  python: |
+    import requests
+
+    response = requests.post(
+        'https://api.nowts.com/v1/testimonials',
+        headers={
+            'Authorization': 'Bearer YOUR_API_TOKEN',
+            'Content-Type': 'application/json'
+        },
+        json={
+            'content': 'Amazing product! Highly recommend to everyone.',
+            'author': {
+                'name': 'John Doe',
+                'email': 'john@example.com',
+                'company': 'Acme Corp'
+            },
+            'rating': 5,
+            'type': 'text'
+        }
+    )
+
+    testimonial = response.json()
+    print(testimonial)
+results:
+  success: |
+    {
+      "id": "test_123456789",
+      "content": "Amazing product! Highly recommend to everyone.",
+      "author": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "company": "Acme Corp"
+      },
+      "rating": 5,
+      "type": "text",
+      "status": "pending",
+      "createdAt": "2025-08-22T10:30:00Z",
+      "updatedAt": "2025-08-22T10:30:00Z"
+    }
+  error: |
+    {
+      "error": {
+        "code": "validation_error",
+        "message": "Invalid testimonial data",
+        "details": {
+          "content": "Content is required and must be at least 10 characters"
+        }
+      }
+    }
+---
+
+# Create Testimonial
+
+Create a new testimonial in your organization. Testimonials can be text, video, or audio format.
+
+## Endpoint
+
+```
+POST /v1/testimonials
+```
+
+## Authentication
+
+This endpoint requires authentication. Include your API token in the Authorization header:
+
+```
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+## Request Body
+
+| Field            | Type   | Required | Description                                   |
+| ---------------- | ------ | -------- | --------------------------------------------- |
+| `content`        | string | Yes      | The testimonial content (min 10 characters)   |
+| `author`         | object | Yes      | Author information                            |
+| `author.name`    | string | Yes      | Author's full name                            |
+| `author.email`   | string | Yes      | Author's email address                        |
+| `author.company` | string | No       | Author's company name                         |
+| `rating`         | number | No       | Rating from 1-5 stars                         |
+| `type`           | string | Yes      | Testimonial type: `text`, `video`, or `audio` |
+| `tags`           | array  | No       | Array of tags for categorization              |
+
+## Response
+
+Returns a testimonial object with the following fields:
+
+| Field       | Type   | Description                                       |
+| ----------- | ------ | ------------------------------------------------- |
+| `id`        | string | Unique testimonial identifier                     |
+| `content`   | string | The testimonial content                           |
+| `author`    | object | Author information                                |
+| `rating`    | number | Rating from 1-5 stars                             |
+| `type`      | string | Testimonial type                                  |
+| `status`    | string | Current status: `pending`, `approved`, `rejected` |
+| `createdAt` | string | ISO 8601 timestamp of creation                    |
+| `updatedAt` | string | ISO 8601 timestamp of last update                 |
+
+## Error Codes
+
+| Code  | Description                                             |
+| ----- | ------------------------------------------------------- |
+| `400` | Bad Request - Invalid request data                      |
+| `401` | Unauthorized - Invalid or missing API token             |
+| `403` | Forbidden - Insufficient permissions                    |
+| `422` | Validation Error - Request data failed validation       |
+| `500` | Internal Server Error - Something went wrong on our end |

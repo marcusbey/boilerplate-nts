@@ -1,0 +1,14 @@
+---
+description: Use Shadcn/UI components with Tailwind CSS for consistent styling across the application.
+globs: *.tsx, *.ts
+alwaysApply: false
+---
+## Context
+
+* Use Shadcn/UI component library for consistent, accessible UI components.
+
+## Rules
+
+- Use Shadcn/UI components for all UI elements.
+- Use Tailwind CSS for custom styling.
+- Install missing Shadcn/UI components with `pnpm dlx shadcn@latest add <component-name>`.

@@ -1,0 +1,18 @@
+---
+description: Create components using Test-Driven Development principles for non-integration testing scenarios.
+globs: 
+alwaysApply: false
+---
+## Context:
+
+- Create components following Test-Driven Development principles.
+- Apply only to components that don't require integration tests (such as database interactions).
+- Always create the test file first, then implement the component.
+
+## Workflow
+
+1. Plan the implementation: component location, naming, and structure.
+2. Create a test file in the `__tests__` folder.
+3. Create the component in the appropriate folder (e.g., `src/features`).
+4. Run tests with `pnpm test:ci`.
+5. Iterate on the component implementation until all tests pass.

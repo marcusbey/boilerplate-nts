@@ -1,0 +1,36 @@
+---
+description: Component creation patterns using export function syntax with typed props.
+globs: *.tsx
+---
+## Context
+
+* Creating a component must ALWAYS follow these rules.
+
+## Rules
+
+- Always use `export function` without "default".
+- Always use a "props" object as the first argument and add type directly to the object.
+
+## Example
+
+With 2 or fewer props:
+
+```tsx
+export function MyComponent(props: { prop1: string; prop2: number }) {
+  return <div>{props.prop1}</div>;
+}
+```
+
+With more than 2 props:
+
+```tsx
+type MyComponentProps = { 
+  prop1: string; 
+  prop2: number;
+  prop3: number;
+}
+
+export function MyComponent(props: MyComponentProps) {
+  return <div>{props.prop1}</div>;
+}
+```
